@@ -3,29 +3,703 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Tutor</title>
+  <title>BeaverBot - AI Tutor</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* Base styling */
+    :root {
+      --primary-color: #800020;
+      --primary-light: rgba(128, 0, 32, 0.08);
+      --primary-lighter: rgba(128, 0, 32, 0.05);
+      --primary-lightest: rgba(128, 0, 32, 0.02);
+      --accent-color: #8B4513;
+      --text-color: #2d1a1a;
+      --text-light: #574141;
+      --bg-color: #fdfbf9;
+      --cream-color: #f8f5f0;
+      --section-spacing: 120px;
+      --item-spacing: 80px;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      --card-radius: 20px;
+      --divider-color: rgba(128, 0, 32, 0.15);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 0;
+    }
+    
+    .background-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 0%, rgba(128, 0, 32, 0.12), transparent 60%);
+      z-index: -1;
+    }
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    nav a:hover {
+      color: var(--primary-color);
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 5% 6rem;
+      text-align: center;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    
+    .subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+    
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 80px !important;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 1.8rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .primary {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 4px 12px rgba(128, 0, 32, 0.2);
+    }
+    
+    .primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(128, 0, 32, 0.25);
+    }
+    
+    .secondary {
+      background-color: rgba(128, 0, 32, 0.08);
+      color: var(--primary-color);
+    }
+    
+    .secondary:hover {
+      background-color: rgba(128, 0, 32, 0.12);
+    }
+    
+    section {
+      max-width: 1200px;
+      margin: var(--section-spacing) auto 0;
+      padding: 0 5%;
+    }
+    
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+    }
+    
+    /* Video Demo Section */
+    .video-container {
+      display: flex;
+      align-items: center;
+      gap: 2em;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+    }
+    
+    .video-reversed {
+      flex-direction: row-reverse;
+    }
+    
+    .video-frame {
+      border-radius: 16px;
+      background: #eee;
+      flex-shrink: 0;
+      max-width: 100%;
+      width: 420px;
+      height: 260px;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .video-content {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    /* Redesigned Project Documentation Section */
+    .documentation-section {
+      background: linear-gradient(to bottom, var(--bg-color), var(--cream-color));
+      padding: 100px 0;
+      margin-top: var(--section-spacing);
+      border-radius: 30px;
+    }
+    
+    .documentation-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+    
+    .section-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 2.5rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: "";
+      display: block;
+      width: 80px;
+      height: 3px;
+      background-color: var(--primary-color);
+      margin: 15px auto 0;
+      border-radius: 2px;
+    }
+    
+    .doc-category {
+      margin-bottom: var(--item-spacing);
+      padding-bottom: var(--item-spacing);
+      position: relative;
+    }
+    
+    .doc-category:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 1px;
+      background-color: var(--divider-color);
+    }
+    
+    .category-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .category-title::before {
+      content: "•";
+      display: block;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Project Identity Section */
+    .identity-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    
+    .identity-item {
+      max-width: 700px;
+      text-align: center;
+    }
+    
+    .identity-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+      display: inline-block;
+      padding-bottom: 5px;
+      border-bottom: 2px solid var(--primary-lighter);
+    }
+    
+    .identity-text {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-color);
+    }
+    
+    /* Value Proposition Section */
+    .value-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    
+    .value-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      transition: transform 0.3s;
+    }
+    
+    .value-item:hover {
+      transform: translateY(-5px);
+    }
+    
+    .value-marker {
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: var(--primary-lightest);
+      border: 2px solid var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-top: 0.3rem;
+    }
+    
+    .value-content-wrap {
+      flex: 1;
+    }
+    
+    .value-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+    }
+    
+    .value-text {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+    
+    /* Technical Implementation Section */
+    .tech-content {
+      background-color: var(--primary-lightest);
+      padding: 2.5rem;
+      border-radius: 20px;
+      position: relative;
+      margin-top: 2rem;
+    }
+    
+    .tech-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    
+    .tech-item {
+      background-color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      font-size: 0.95rem;
+      color: var(--text-color);
+      flex: 0 1 calc(50% - 0.75rem);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    
+    .tech-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .tech-highlight {
+      font-weight: 600;
+      color: var(--primary-color);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    
+    /* Contact Section */
+    .contact-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background-color: white;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .contact-title {
+      font-family: 'Libre Baskerville', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .contact-title::after {
+      content: "";
+      display: block;
+      width: 40px;
+      height: 2px;
+      background-color: var(--primary-color);
+      margin: 10px auto 0;
+    }
+    
+    .contact-text {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    .contact-email {
+      display: inline-block;
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.5rem 1.5rem;
+      background-color: var(--primary-lightest);
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+    
+    .contact-email:hover {
+      background-color: var(--primary-lighter);
+      transform: translateY(-2px);
+    }
+    
+    /* Footer */
+    footer {
+      margin-top: var(--section-spacing);
+      padding: 60px 5%;
+      text-align: center;
+      background: linear-gradient(to bottom, transparent, rgba(128, 0, 32, 0.05));
+    }
+    
+    /* Team members highlight styling */
+    .team-members {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .team-member {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      background-color: white;
+      border-radius: 30px;
+      margin: 0.3rem;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+    }
+    
+    .team-role {
+      color: var(--primary-color);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .category-title {
+        font-size: 1.5rem;
+      }
+      
+      .tech-item {
+        flex: 0 1 100%;
+      }
+      
+      .value-item {
+        flex-direction: column;
+      }
+      
+      .value-marker {
+        margin-bottom: 1rem;
+      }
+      
+      .actions {
+        margin-bottom: 60px !important;
+      }
+      
+      .contact-content {
+        padding: 2rem;
+      }
+      
+      .doc-category {
+        margin-bottom: 60px;
+        padding-bottom: 60px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="background-glow"></div>
   <nav>
-    <div class="logo">Agentic Tutor</div>
+    <div class="logo">BeaverBot</div>
     <ul>
       <li><a href="index.html">Home</a></li>
-      <li><a href="features.html">Features</a></li>
-      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="#documentation">Project Details</a></li>
     </ul>
   </nav>
+  
   <main>
-    <h1>One-click for Personalized Learning</h1>
+    <h1>RAG Based Personalized Learning</h1>
     <p class="subtitle">
       Unlock your potential with an AI tutor that adapts to you.<br>
       Retain more, recall faster, and build lasting knowledge.
     </p>
     <div class="actions">
-      <a href="#" class="btn primary">Try the Tutor</a>
+      <a href="http://18.224.171.203:5000/" target="_blank" rel="noopener noreferrer" class="btn primary">Try the Tutor</a>
+      <a href="#overview" class="btn secondary">Project Overview</a>
+      <a href="https://github.com/Sodas0/Agentic-Workflows-AI" class="btn secondary" target="_blank" rel="noopener">GitHub Repo</a>
+      <a href="#about" class="btn secondary">About Us</a>
     </div>
-</main>
+  </main>
+  
+  <section id="overview">
+    <h2>Project Overview</h2>
+    <p style="max-width: 700px; margin: 0 auto; font-size: 1.1rem; text-align: center;">
+      Agentic Tutor is an AI-powered platform designed to provide personalized learning experiences for students. Our system adapts to each learner's strengths and weaknesses, helping them retain information and build active recall through proven educational techniques. Explore how our technology can help you achieve your academic goals.
+    </p>
+  </section>
+  
+  <section id="video-demo">
+    <h2>See BeaverBot in Action</h2>
+    <!-- First video demo -->
+    <div class="video-container">
+      <video class="video-frame" controls poster="https://via.placeholder.com/420x260?text=Video+Demo+Placeholder">
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-content">
+        <h3>Interactive Demo</h3>
+        <p>
+          This video demonstrates how Agentic Tutor leverages RAG to provide accurate information for discussion directly from the textbook
+        </p>
+      </div>
+    </div>
+    <!-- Second video demo -->
+    <div class="video-container video-reversed">
+      <video class="video-frame" controls poster="https://via.placeholder.com/420x260?text=Video+Demo+Placeholder+2">
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-content">
+        <h3>Quiz Feature in Action</h3>
+        <p>
+          See how BeaverBot helps students practice active recall and spaced repetition, making learning more effective and long-lasting.
+        </p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Redesigned Project Documentation Section -->
+  <section id="documentation" class="documentation-section">
+    <div class="documentation-container">
+      <h2 class="section-title">Project Documentation</h2>
+      
+      <!-- Project Identity (Centered layout with clean typography) -->
+      <div class="doc-category">
+        <h3 class="category-title">Project Identity</h3>
+        <div class="identity-content">
+          <div class="identity-item">
+            <div class="identity-title">Clear Project Title and Branding</div>
+            <div class="identity-text">
+              BeaverBot is an AI-powered tutor that helps students master subjects through personalized learning paths and active recall techniques. Our platform leverages retrieval-augmented generation (RAG) to create truly adaptive educational experiences.
+            </div>
+          </div>
+          
+          <div class="identity-item">
+            <div class="identity-title">Team Members and Roles</div>
+            <div class="identity-text">
+              Our dedicated team combines expertise across education, AI, and software engineering to bring BeaverBot to life.
+            </div>
+            <div class="team-members">
+              <span class="team-member">Soham Das <span class="team-role">(Team Captain)</span></span>
+              <span class="team-member">Elliott Shim</span>
+              <span class="team-member">Padraic Bergin</span>
+              <span class="team-member">Aaron Rasmussen</span>
+              <span class="team-member">Joseph Slade <span class="team-role">(Project Manager)</span></span>
+            </div>
+          </div>
+          
+          <div class="identity-item">
+            <div class="identity-title">Project Timeline/Status</div>
+            <div class="identity-text">
+              BeaverBot is currently in private beta phase with active development. We're gathering feedback and continuously improving the platform based on real-world usage data and student input.
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Value Proposition (Left-aligned with numbering) -->
+      <div class="doc-category">
+        <h3 class="category-title">Value Proposition</h3>
+        <div class="value-content">
+          <div class="value-item">
+            <div class="value-marker">1</div>
+            <div class="value-content-wrap">
+              <div class="value-title">Problem Statement</div>
+              <div class="value-text">
+                Traditional learning methods often fail to adapt to individual student needs, resulting in knowledge gaps, inefficient study sessions, and poor long-term retention. Static learning materials can't respond to a student's unique profile of strengths and weaknesses.
+              </div>
+            </div>
+          </div>
+          
+          <div class="value-item">
+            <div class="value-marker">2</div>
+            <div class="value-content-wrap">
+              <div class="value-title">Target Audience</div>
+              <div class="value-text">
+                College students, lifelong learners, and professionals seeking to master new subjects efficiently and retain information long-term. Our platform is especially valuable for those studying complex technical subjects that require deep understanding.
+              </div>
+            </div>
+          </div>
+          
+          <div class="value-item">
+            <div class="value-marker">3</div>
+            <div class="value-content-wrap">
+              <div class="value-title">Core Features and Benefits</div>
+              <div class="value-text">
+                Adaptive learning paths, spaced repetition algorithms, personalized feedback, knowledge mapping, and progress analytics to maximize retention. Our RAG-based approach ensures that learning materials are perfectly tailored to each student's needs.
+              </div>
+            </div>
+          </div>
+          
+          <div class="value-item">
+            <div class="value-marker">4</div>
+            <div class="value-content-wrap">
+              <div class="value-title">Comparison with Existing Solutions</div>
+              <div class="value-text">
+                Unlike static flashcard apps or generic tutoring services, BeaverBot adapts in real-time to your learning patterns and creates personalized study plans. While other platforms offer some personalization, our deep integration of RAG technology provides a truly responsive learning experience.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Technical Implementation (Card-based with subtle highlight) -->
+      <div class="doc-category">
+        <h3 class="category-title">Technical Implementation</h3>
+        <div class="tech-content">
+          <div class="tech-title">Key Technologies Used</div>
+          <div class="tech-list">
+            <div class="tech-item">
+              <span class="tech-highlight">Python/Flask</span>
+              Backend framework providing a robust foundation for our application architecture
+            </div>
+            <div class="tech-item">
+              <span class="tech-highlight">Qdrant Vector Database</span>
+              Ensures efficient semantic searching and fast retrieval of relevant learning materials
+            </div>
+            <div class="tech-item">
+              <span class="tech-highlight">Advanced LLMs</span>
+              Leveraging GPT-4o and Claude for sophisticated natural language understanding and generation
+            </div>
+            <div class="tech-item">
+              <span class="tech-highlight">LangChain Framework</span>
+              Provides the agentic capabilities that enable our system to reason about learning strategies
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Contact Information (Elegant card design) -->
+      <div class="doc-category">
+        <h3 class="category-title">Contact Information</h3>
+        <div class="contact-content">
+          <div class="contact-title">How to Reach Us</div>
+          <div class="contact-text">
+            For questions, feedback, or collaboration opportunities regarding the BeaverBot project, please reach out to our team lead:
+          </div>
+          <a href="mailto:dasso@oregonstate.edu" class="contact-email">dasso@oregonstate.edu</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <footer id="about">
+    <h2>About Us</h2>
+    <p style="max-width: 600px; margin: 0 auto 1em auto;">
+      We are a team of passionate educators and engineers dedicated to making learning more effective and accessible for everyone. Our mission is to empower students with the tools they need to succeed in a rapidly changing world.
+    </p>
+  </footer>
 </body>
-</html> 
+</html>
